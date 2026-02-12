@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { SeedModule } from './seed/seed.module';
+import { ExercisesModule } from './exercises/exercises.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { AuthModule } from './auth/auth.module';
       synchronize: true, // Disable in production
     }),
     AuthModule,
+    SeedModule,
+    ExercisesModule,
   ],
   controllers: [],
   providers: [],

@@ -6,6 +6,9 @@
 # postgres
 postgres/
 
+# static
+static/
+
 # Logs
 logs
 *.log
