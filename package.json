@@ -31,11 +31,13 @@
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
+    "cloudinary": "^2.9.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.18.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "streamifier": "^0.1.1",
     "typeorm": "^0.3.28"
   },
   "devDependencies": {
@@ -50,6 +52,7 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^22.10.7",
     "@types/passport-jwt": "^4.0.1",
+    "@types/streamifier": "^0.1.2",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
     "globals": "^16.0.0",

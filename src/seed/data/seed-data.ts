@@ -76,7 +76,6 @@ export const initialData: SeedData = {
       equipment: 'Barbell',
       primaryMuscle: 'Chest',
       secondaryMuscle: ['Triceps', 'Shoulders'],
-      videoUrl: '00251201-Barbell-Bench-Press_Chest.mp4',
       instruction: [
         'Lie on the bench.',
         'Extend your arms and grab the bar evenly, having your hands slightly wider than shoulder-width apart.',
@@ -86,13 +85,14 @@ export const initialData: SeedData = {
         'Inhale again and lower the barbell to your lower chest, tapping it slightly.',
         'Hold for a moment and press the bar until your elbows are straight. Exhale.',
       ],
+      videoUrl:
+        'https://res.cloudinary.com/dzwstma9h/video/upload/v1771051550/exercises/00251201-Barbell-Bench-Press_Chest_ydmn6f.mp4',
     },
     {
       title: 'Hack Squat (Machine)',
       equipment: 'Machine',
       primaryMuscle: 'Quadriceps',
       secondaryMuscle: ['Glutes', 'Hamstrings'],
-      videoUrl: '07431201-Sled-Hack-Squat_Hips.mp4',
       instruction: [
         'Add weight to the machine.',
         'Position yourself inside the machine with your shoulders against the pad.',
@@ -104,6 +104,8 @@ export const initialData: SeedData = {
         'Press through your heels and straighten your legs, exhaling near the top.',
         'Once finished, put the safety on, rack the weight, and relax your body.',
       ],
+      videoUrl:
+        'https://res.cloudinary.com/dzwstma9h/video/upload/v1771051589/exercises/07431201-Sled-Hack-Squat_Hips_xq4asz.mp4',
     },
   ],
 };

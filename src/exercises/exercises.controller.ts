@@ -14,27 +14,18 @@ import { ExercisesService } from './exercises.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { fileNamer, fileVideoFilter } from 'src/files/helpers';
-import { ConfigService } from '@nestjs/config';
+import { fileVideoFilter } from 'src/files/helpers';
 
 @Controller('exercises')
 export class ExercisesController {
-  constructor(
-    private readonly exercisesService: ExercisesService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly exercisesService: ExercisesService) {}
 
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './static/exercises',
-        filename: fileNamer,
-      }),
       fileFilter: fileVideoFilter,
       limits: {
-        fileSize: 50 * 1024 * 1024, // 50MB
+        fileSize: 2 * 1024 * 1024, // 2MB
       },
     }),
   )
@@ -42,9 +33,7 @@ export class ExercisesController {
     @Body() createExerciseDto: CreateExerciseDto,
     @UploadedFile(new ParseFilePipe()) file: Express.Multer.File,
   ) {
-    const videoUrl = `${this.configService.get('HOST_API')}/files/exercise/${file.filename}`;
-
-    return this.exercisesService.create(createExerciseDto, videoUrl, file.path);
+    return this.exercisesService.create(createExerciseDto, file);
   }
 
   @Get()

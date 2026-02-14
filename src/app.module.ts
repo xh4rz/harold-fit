@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { SeedModule } from './seed/seed.module';
 import { ExercisesModule } from './exercises/exercises.module';
 import { FilesModule } from './files/files.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { FilesModule } from './files/files.module';
     SeedModule,
     ExercisesModule,
     FilesModule,
+    CloudinaryModule,
   ],
   controllers: [],
   providers: [],

@@ -4,12 +4,15 @@ import { User } from 'src/auth/entities/user.entity';
 import { Repository } from 'typeorm';
 import { initialData } from './data/seed-data';
 import { ExercisesService } from 'src/exercises/exercises.service';
+import { Exercise } from 'src/exercises/entities/exercise.entity';
 
 @Injectable()
 export class SeedService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Exercise)
+    private readonly exerciseRepository: Repository<Exercise>,
     private readonly exercisesService: ExercisesService,
   ) {}
 
@@ -43,10 +46,8 @@ export class SeedService {
     await this.exercisesService.deleteAllExercises();
     const exercises = initialData.exercises;
 
-    const insertPromises = exercises.map((exercise) =>
-      this.exercisesService.create(exercise, exercise.videoUrl),
-    );
-    await Promise.all(insertPromises);
+    await this.exerciseRepository.save(exercises);
+
     return true;
   }
 }
