@@ -27,4 +27,7 @@ export class Exercise {
     nullable: false,
   })
   instruction: string[];
+
+  @Column('text')
+  videoUrl: string;
 }

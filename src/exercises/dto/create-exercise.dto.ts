@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   ArrayNotEmpty,
   IsArray,
@@ -23,6 +24,9 @@ export class CreateExerciseDto {
   @IsOptional()
   secondaryMuscle?: string[];
 
+  @Transform(({ value }) =>
+    typeof value === 'string' ? JSON.parse(value) : value,
+  )
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })

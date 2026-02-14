@@ -1,13 +1,14 @@
+import { existsSync, unlinkSync } from 'fs';
 import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Exercise } from './entities/exercise.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class ExercisesService {
@@ -16,10 +17,25 @@ export class ExercisesService {
     private readonly exerciseRepository: Repository<Exercise>,
   ) {}
 
-  async create(createExerciseDto: CreateExerciseDto) {
+  async create(
+    createExerciseDto: CreateExerciseDto,
+    videoUrl: string,
+    filePath?: string,
+  ) {
     try {
-      await this.exerciseRepository.save(createExerciseDto);
+      const exercise = this.exerciseRepository.create({
+        ...createExerciseDto,
+        videoUrl,
+      });
+
+      await this.exerciseRepository.save(exercise);
+
+      return exercise;
     } catch (error) {
+      if (filePath && existsSync(filePath)) {
+        unlinkSync(filePath);
+      }
+
       this.handleDBExceptions(error);
     }
   }

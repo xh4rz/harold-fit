@@ -44,7 +44,7 @@ export class SeedService {
     const exercises = initialData.exercises;
 
     const insertPromises = exercises.map((exercise) =>
-      this.exercisesService.create(exercise),
+      this.exercisesService.create(exercise, exercise.videoUrl),
     );
     await Promise.all(insertPromises);
     return true;
