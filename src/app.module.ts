@@ -6,6 +6,8 @@ import { SeedModule } from './seed/seed.module';
 import { ExercisesModule } from './exercises/exercises.module';
 import { FilesModule } from './files/files.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CommonModule } from './common/common.module';
+import { DatabaseExceptionService } from './common/services';
 
 @Module({
   imports: [
@@ -25,8 +27,9 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     ExercisesModule,
     FilesModule,
     CloudinaryModule,
+    CommonModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [DatabaseExceptionService],
 })
 export class AppModule {}

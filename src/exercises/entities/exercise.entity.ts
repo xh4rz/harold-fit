@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { ExerciseVideo } from './';
 
 @Entity({ name: 'exercises' })
 export class Exercise {
@@ -28,6 +29,9 @@ export class Exercise {
   })
   instruction: string[];
 
-  @Column('text')
-  videoUrl: string;
+  @OneToOne(() => ExerciseVideo, (exerciseVideo) => exerciseVideo.exercise, {
+    cascade: true,
+    eager: true,
+  })
+  video: ExerciseVideo;
 }

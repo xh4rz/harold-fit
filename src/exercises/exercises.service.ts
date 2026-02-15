@@ -1,25 +1,25 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
-import { Exercise } from './entities/exercise.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { CloudinaryResponse } from 'src/cloudinary/interfaces/cloudinary-response';
+import { Exercise, ExerciseVideo } from './entities';
+import { DatabaseExceptionService } from 'src/common/services';
 
 @Injectable()
 export class ExercisesService {
-  private readonly logger = new Logger('ExercisesService');
-
   constructor(
     @InjectRepository(Exercise)
     private readonly exerciseRepository: Repository<Exercise>,
+
+    @InjectRepository(ExerciseVideo)
+    private readonly exerciseVideoRepository: Repository<ExerciseVideo>,
+
     private readonly cloudinaryService: CloudinaryService,
+
+    private readonly databaseExceptionService: DatabaseExceptionService,
   ) {}
 
   async create(
@@ -33,7 +33,9 @@ export class ExercisesService {
 
       const exercise = this.exerciseRepository.create({
         ...createExerciseDto,
-        videoUrl: uploadResult.secure_url,
+        video: this.exerciseVideoRepository.create({
+          url: uploadResult.secure_url,
+        }),
       });
 
       await this.exerciseRepository.save(exercise);
@@ -47,7 +49,7 @@ export class ExercisesService {
         );
       }
 
-      this.handleDBExceptions(error);
+      this.databaseExceptionService.handleDBExceptions(error);
     }
   }
 
@@ -75,17 +77,7 @@ export class ExercisesService {
     try {
       return await query.delete().where({}).execute();
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.databaseExceptionService.handleDBExceptions(error);
     }
-  }
-
-  private handleDBExceptions(error: any): never {
-    if (error.code === '23505') throw new BadRequestException(error.detail);
-
-    this.logger.error(error);
-
-    throw new InternalServerErrorException(
-      'Unexpected error, check server logs',
-    );
   }
 }

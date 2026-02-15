@@ -4,7 +4,7 @@ import { User } from 'src/auth/entities/user.entity';
 import { Repository } from 'typeorm';
 import { initialData } from './data/seed-data';
 import { ExercisesService } from 'src/exercises/exercises.service';
-import { Exercise } from 'src/exercises/entities/exercise.entity';
+import { Exercise, ExerciseVideo } from 'src/exercises/entities';
 
 @Injectable()
 export class SeedService {
@@ -13,6 +13,10 @@ export class SeedService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Exercise)
     private readonly exerciseRepository: Repository<Exercise>,
+
+    @InjectRepository(ExerciseVideo)
+    private readonly exerciseVideoRepository: Repository<ExerciseVideo>,
+
     private readonly exercisesService: ExercisesService,
   ) {}
 
@@ -44,9 +48,19 @@ export class SeedService {
 
   private async insertNewExercies() {
     await this.exercisesService.deleteAllExercises();
+
     const exercises = initialData.exercises;
 
-    await this.exerciseRepository.save(exercises);
+    const exercise = exercises.map((exercise) =>
+      this.exerciseRepository.create({
+        ...exercise,
+        video: this.exerciseVideoRepository.create({
+          url: exercise.videoUrl,
+        }),
+      }),
+    );
+
+    await this.exerciseRepository.save(exercise);
 
     return true;
   }
