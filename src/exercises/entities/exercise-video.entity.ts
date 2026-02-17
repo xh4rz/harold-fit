@@ -11,11 +11,14 @@ import { Exercise } from './';
   name: 'exercises_videos',
 })
 export class ExerciseVideo {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column('text')
   url: string;
+
+  @Column('text')
+  publicId: string;
 
   @OneToOne(() => Exercise, (exercise) => exercise.video, {
     onDelete: 'CASCADE',

@@ -4,16 +4,23 @@ interface SeedUser {
   email: string;
   fullName: string;
   password: string;
-  roles: string[];
+  roles: Roles[];
 }
+
+type Roles = 'admin' | 'user';
 
 interface SeedExercise {
   title: string;
   primaryMuscle: Muscle;
   secondaryMuscle?: Muscle[];
   equipment: Equipment;
-  videoUrl: string;
+  file: File;
   instruction: string[];
+}
+
+interface File {
+  url: string;
+  publicId: string;
 }
 
 type Muscle =
@@ -58,16 +65,16 @@ interface SeedData {
 export const initialData: SeedData = {
   users: [
     {
-      email: 'test1@google.com',
-      fullName: 'Test One',
+      email: 'harold@gmail.com',
+      fullName: 'Harold Gonzalez',
       password: bcrypt.hashSync('Abc123', 10),
       roles: ['admin'],
     },
     {
-      email: 'test2@google.com',
-      fullName: 'Test Two',
+      email: 'olga@google.com',
+      fullName: 'Olga Mancipe',
       password: bcrypt.hashSync('Abc123', 10),
-      roles: ['user', 'super'],
+      roles: ['user'],
     },
   ],
   exercises: [
@@ -85,8 +92,10 @@ export const initialData: SeedData = {
         'Inhale again and lower the barbell to your lower chest, tapping it slightly.',
         'Hold for a moment and press the bar until your elbows are straight. Exhale.',
       ],
-      videoUrl:
-        'https://res.cloudinary.com/dzwstma9h/video/upload/v1771051550/exercises/00251201-Barbell-Bench-Press_Chest_ydmn6f.mp4',
+      file: {
+        url: 'https://res.cloudinary.com/dzwstma9h/video/upload/v1771051550/exercises/00251201-Barbell-Bench-Press_Chest_ydmn6f.mp4',
+        publicId: 'exercises/00251201-Barbell-Bench-Press_Chest_ydmn6f',
+      },
     },
     {
       title: 'Hack Squat (Machine)',
@@ -104,8 +113,11 @@ export const initialData: SeedData = {
         'Press through your heels and straighten your legs, exhaling near the top.',
         'Once finished, put the safety on, rack the weight, and relax your body.',
       ],
-      videoUrl:
-        'https://res.cloudinary.com/dzwstma9h/video/upload/v1771051589/exercises/07431201-Sled-Hack-Squat_Hips_xq4asz.mp4',
+
+      file: {
+        url: 'https://res.cloudinary.com/dzwstma9h/video/upload/v1771051589/exercises/07431201-Sled-Hack-Squat_Hips_xq4asz.mp4',
+        publicId: 'exercises/07431201-Sled-Hack-Squat_Hips_xq4asz',
+      },
     },
   ],
 };

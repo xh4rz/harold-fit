@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { CloudinaryResponse } from 'src/cloudinary/interfaces/cloudinary-response';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { CloudinaryResponse } from '../cloudinary/interfaces/cloudinary-response';
 import { Exercise, ExerciseVideo } from './entities';
-import { DatabaseExceptionService } from 'src/common/services';
+import { DatabaseExceptionService } from '../common/services';
+import { PaginationDto } from '../common/dtos';
 
 @Injectable()
 export class ExercisesService {
@@ -34,13 +35,17 @@ export class ExercisesService {
       const exercise = this.exerciseRepository.create({
         ...createExerciseDto,
         video: this.exerciseVideoRepository.create({
+          publicId: uploadResult.public_id,
           url: uploadResult.secure_url,
         }),
       });
 
       await this.exerciseRepository.save(exercise);
 
-      return exercise;
+      return {
+        ...exercise,
+        video: exercise?.video.url,
+      };
     } catch (error) {
       if (uploadResult?.public_id) {
         await this.cloudinaryService.deleteFile(
@@ -53,22 +58,91 @@ export class ExercisesService {
     }
   }
 
-  async findAll() {
-    const exercises = await this.exerciseRepository.find({});
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
 
-    return exercises;
+    const exercises = await this.exerciseRepository.find({
+      take: limit,
+      skip: offset,
+    });
+
+    return exercises.map((exercise) => ({
+      ...exercise,
+      video: exercise.video.url,
+    }));
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} exercise`;
+  async findOne(id: string) {
+    const exercise = await this.exerciseRepository.findOne({
+      where: { id },
+    });
+
+    if (!exercise)
+      throw new NotFoundException(`Exercise with id "${id}" not found`);
+
+    return {
+      ...exercise,
+      video: exercise?.video.url,
+    };
   }
 
-  update(id: number, updateExerciseDto: UpdateExerciseDto) {
-    return `This action updates a #${id} exercise`;
+  async update(
+    id: string,
+    updateExerciseDto: UpdateExerciseDto,
+    file?: Express.Multer.File,
+  ) {
+    let uploadResult: CloudinaryResponse | undefined;
+
+    try {
+      if (file) {
+        const exercise = await this.exerciseRepository.findOne({
+          where: { id },
+        });
+
+        if (!exercise) {
+          throw new NotFoundException(`Exercise with id "${id}" not found`);
+        }
+
+        const oldPublicId = exercise.video.publicId;
+
+        uploadResult = await this.cloudinaryService.uploadFile(file);
+
+        await this.exerciseVideoRepository.update(exercise.video.id, {
+          url: uploadResult.secure_url,
+          publicId: uploadResult.public_id,
+        });
+
+        if (oldPublicId) {
+          await this.cloudinaryService.deleteFile(oldPublicId, 'video');
+        }
+      }
+
+      await this.exerciseRepository.update(id, updateExerciseDto);
+
+      return this.findOne(id);
+    } catch (error) {
+      if (uploadResult?.public_id) {
+        await this.cloudinaryService.deleteFile(
+          uploadResult.public_id,
+          'video',
+        );
+      }
+
+      this.databaseExceptionService.handleDBExceptions(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} exercise`;
+  async remove(id: string) {
+    const exercise = await this.exerciseRepository.findOne({
+      where: { id },
+    });
+
+    if (!exercise)
+      throw new NotFoundException(`Exercise with id "${id}" not found`);
+
+    await this.cloudinaryService.deleteFile(exercise.video.publicId, 'video');
+
+    await this.exerciseRepository.remove(exercise);
   }
 
   async deleteAllExercises() {

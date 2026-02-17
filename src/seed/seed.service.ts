@@ -11,6 +11,7 @@ export class SeedService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
     @InjectRepository(Exercise)
     private readonly exerciseRepository: Repository<Exercise>,
 
@@ -55,7 +56,8 @@ export class SeedService {
       this.exerciseRepository.create({
         ...exercise,
         video: this.exerciseVideoRepository.create({
-          url: exercise.videoUrl,
+          url: exercise.file.url,
+          publicId: exercise.file.publicId,
         }),
       }),
     );
