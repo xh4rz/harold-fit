@@ -18,11 +18,15 @@ import { ExercisesService } from './exercises.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { PaginationDto } from '../common/dtos';
+import { Auth } from '../auth/decorators';
+import { ValidRoles } from 'src/auth/interfaces';
 
+@Auth()
 @Controller('exercises')
 export class ExercisesController {
   constructor(private readonly exercisesService: ExercisesService) {}
 
+  @Auth(ValidRoles.admin)
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
@@ -49,6 +53,7 @@ export class ExercisesController {
     return this.exercisesService.findOne(id);
   }
 
+  @Auth(ValidRoles.admin)
   @Patch(':id')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -66,6 +71,7 @@ export class ExercisesController {
     return this.exercisesService.update(id, updateExerciseDto, file);
   }
 
+  @Auth(ValidRoles.admin)
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.exercisesService.remove(id);

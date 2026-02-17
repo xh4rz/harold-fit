@@ -1,6 +1,8 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { CloudinaryService } from './cloudinary.service';
+import { Auth } from 'src/auth/decorators';
 
+@Auth()
 @Controller('cloudinary')
 export class CloudinaryController {
   constructor(private readonly cloudinaryService: CloudinaryService) {}
