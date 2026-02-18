@@ -1,23 +1,62 @@
+# Harold Fit API
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-# Harold Fit API
+# Ejecutar en desarrollo
 
-1. Clonar proyecto
-2. `npm install`
-3. clonr el archivo `.env.template` y renombrarlo a `.env`
-4. Cambiar las variables de entorno
-5. Levantar la base de datos
+1. Clonar el repositorio
+2. Ejecutar
+
+```
+npm install
+```
+
+3. Tener Nest CLI instalado
+
+```
+npm i -g @nestjs/cli
+```
+
+4. Levantar la base de datos
 
 ```
 docker-compose up -d
 ```
 
-6. Ejecutar SEED
+5. Clonar el archivo **.env.template** y renombrar la copia a **.env**
+
+6. Llenar las variables de entorno definidas en el **.env**
+
+7. Ejecutar la aplicación en dev:
+
+```
+npm run start:dev
+```
+
+8. Reconstruir la base de datos con la semilla
 
 ```
 http://localhost:3000/api/seed
 ```
 
-7. Levantar: `npm run start:dev`
+# Production Build
+
+1. Crear el archivo **.env.prod**
+2. Llenar las variables de entorno de prod
+3. Crear la nueva imagen
+
+```
+docker-compose -f docker-compose.prod.yaml --env-file .env.prod up --build
+```
+
+# Stack usado
+
+- Nest
+- Postgres
+- TypeORM
+
+# Notas
+
+- Usar render o railway para subir a prod
