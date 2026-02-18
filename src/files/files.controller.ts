@@ -12,7 +12,7 @@ import {
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { fileNamer, fileVideoFilter } from './helpers';
+import { fileNamer, fileVideoFilter } from '../common/helpers';
 import { ConfigService } from '@nestjs/config';
 
 @Controller('files')

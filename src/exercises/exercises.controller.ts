@@ -6,21 +6,21 @@ import {
   Patch,
   Param,
   Delete,
-  UseInterceptors,
   UploadedFile,
   ParseFilePipe,
   Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { fileVideoFilter } from '../files/helpers';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { ExercisesService } from './exercises.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { PaginationDto } from '../common/dtos';
 import { Auth } from '../auth/decorators';
+import { VideoFileUpload } from '../common/decorators';
 import { ValidRoles } from 'src/auth/interfaces';
 
+@ApiBearerAuth()
 @Auth()
 @Controller('exercises')
 export class ExercisesController {
@@ -28,14 +28,7 @@ export class ExercisesController {
 
   @Auth(ValidRoles.admin)
   @Post()
-  @UseInterceptors(
-    FileInterceptor('file', {
-      fileFilter: fileVideoFilter,
-      limits: {
-        fileSize: 2 * 1024 * 1024, // 2MB
-      },
-    }),
-  )
+  @VideoFileUpload()
   create(
     @Body() createExerciseDto: CreateExerciseDto,
     @UploadedFile(new ParseFilePipe()) file: Express.Multer.File,
@@ -55,14 +48,7 @@ export class ExercisesController {
 
   @Auth(ValidRoles.admin)
   @Patch(':id')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      fileFilter: fileVideoFilter,
-      limits: {
-        fileSize: 2 * 1024 * 1024, // 2MB
-      },
-    }),
-  )
+  @VideoFileUpload()
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateExerciseDto: UpdateExerciseDto,

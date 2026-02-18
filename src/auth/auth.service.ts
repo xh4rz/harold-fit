@@ -31,7 +31,7 @@ export class AuthService {
       const { password: _, ...restUser } = user;
 
       return {
-        ...restUser,
+        user: restUser,
         token: this.getJwtToken({
           id: user.id,
         }),
@@ -65,7 +65,7 @@ export class AuthService {
     const { password: _, ...restUser } = user;
 
     return {
-      ...restUser,
+      user: restUser,
       token: this.getJwtToken({
         id: user.id,
       }),
