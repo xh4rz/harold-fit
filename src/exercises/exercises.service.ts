@@ -8,6 +8,7 @@ import { CloudinaryResponse } from '../cloudinary/interfaces/cloudinary-response
 import { Exercise, ExerciseVideo } from './entities';
 import { DatabaseExceptionService } from '../common/services';
 import { PaginationDto } from '../common/dtos';
+import { Equipment } from '../equipments/entities/equipment.entity';
 
 @Injectable()
 export class ExercisesService {
@@ -42,10 +43,7 @@ export class ExercisesService {
 
       await this.exerciseRepository.save(exercise);
 
-      return {
-        ...exercise,
-        video: exercise?.video.url,
-      };
+      return this.findOne(exercise.id);
     } catch (error) {
       if (uploadResult?.public_id) {
         await this.cloudinaryService.deleteFile(

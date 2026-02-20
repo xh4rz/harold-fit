@@ -13,7 +13,7 @@ interface SeedExercise {
   title: string;
   primaryMuscle: Muscle;
   secondaryMuscle?: Muscle[];
-  equipment: Equipment;
+  equipmentId: number;
   file: File;
   instruction: string[];
 }
@@ -60,6 +60,12 @@ type Equipment =
 interface SeedData {
   users: SeedUser[];
   exercises: SeedExercise[];
+  equipments: SeedEquipment[];
+}
+
+interface SeedEquipment {
+  id: number;
+  name: Equipment;
 }
 
 export const initialData: SeedData = {
@@ -80,7 +86,7 @@ export const initialData: SeedData = {
   exercises: [
     {
       title: 'Bench Press (Barbell)',
-      equipment: 'Barbell',
+      equipmentId: 2, // Barbell
       primaryMuscle: 'Chest',
       secondaryMuscle: ['Triceps', 'Shoulders'],
       instruction: [
@@ -99,7 +105,7 @@ export const initialData: SeedData = {
     },
     {
       title: 'Hack Squat (Machine)',
-      equipment: 'Machine',
+      equipmentId: 5, // Machine
       primaryMuscle: 'Quadriceps',
       secondaryMuscle: ['Glutes', 'Hamstrings'],
       instruction: [
@@ -118,6 +124,48 @@ export const initialData: SeedData = {
         url: 'https://res.cloudinary.com/dzwstma9h/video/upload/v1771051589/exercises/07431201-Sled-Hack-Squat_Hips_xq4asz.mp4',
         publicId: 'exercises/07431201-Sled-Hack-Squat_Hips_xq4asz',
       },
+    },
+  ],
+  equipments: [
+    {
+      id: 1,
+      name: 'All Equipment',
+    },
+    {
+      id: 2,
+      name: 'Barbell',
+    },
+    {
+      id: 3,
+      name: 'Dumbbell',
+    },
+    {
+      id: 4,
+      name: 'Kettlebell',
+    },
+    {
+      id: 5,
+      name: 'Machine',
+    },
+    {
+      id: 6,
+      name: 'Plate',
+    },
+    {
+      id: 7,
+      name: 'Resistance Band',
+    },
+    {
+      id: 8,
+      name: 'Suspension Band',
+    },
+    {
+      id: 9,
+      name: 'None',
+    },
+    {
+      id: 10,
+      name: 'Other',
     },
   ],
 };

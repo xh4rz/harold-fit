@@ -2,6 +2,7 @@ import { Transform } from 'class-transformer';
 import {
   ArrayNotEmpty,
   IsArray,
+  IsNumber,
   IsOptional,
   IsString,
   MinLength,
@@ -12,9 +13,8 @@ export class CreateExerciseDto {
   @MinLength(5)
   title: string;
 
-  @IsString()
-  @MinLength(3)
-  equipment: string;
+  @IsNumber()
+  equipmentId: number;
 
   @IsString()
   @MinLength(3)

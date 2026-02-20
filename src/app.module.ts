@@ -8,6 +8,7 @@ import { FilesModule } from './files/files.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CommonModule } from './common/common.module';
 import { DatabaseExceptionService } from './common/services';
+import { EquipmentsModule } from './equipments/equipments.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { DatabaseExceptionService } from './common/services';
     FilesModule,
     CloudinaryModule,
     CommonModule,
+    EquipmentsModule,
   ],
   controllers: [],
   providers: [DatabaseExceptionService],

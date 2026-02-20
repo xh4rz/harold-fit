@@ -1,5 +1,13 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ExerciseVideo } from './';
+import { Equipment } from '../../equipments/entities/equipment.entity';
 
 @Entity({ name: 'exercises' })
 export class Exercise {
@@ -10,9 +18,6 @@ export class Exercise {
     unique: true,
   })
   title: string;
-
-  @Column('text')
-  equipment: string;
 
   @Column('text')
   primaryMuscle: string;
@@ -34,4 +39,14 @@ export class Exercise {
     eager: true,
   })
   video: ExerciseVideo;
+
+  @Column({ name: 'equipmentId', select: false })
+  equipmentId: number;
+
+  @ManyToOne(() => Equipment, (equipment) => equipment.exercises, {
+    nullable: false,
+    eager: true,
+  })
+  @JoinColumn({ name: 'equipmentId' })
+  equipment: Equipment;
 }

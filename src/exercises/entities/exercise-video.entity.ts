@@ -23,6 +23,6 @@ export class ExerciseVideo {
   @OneToOne(() => Exercise, (exercise) => exercise.video, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'exerciseId' })
   exercise: Exercise;
 }
