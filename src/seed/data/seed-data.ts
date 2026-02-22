@@ -11,9 +11,9 @@ type Roles = 'admin' | 'user';
 
 interface SeedExercise {
   title: string;
-  primaryMuscle: Muscle;
-  secondaryMuscle?: Muscle[];
   equipmentId: number;
+  primaryMuscleId: number;
+  secondaryMuscleIds?: number[];
   file: File;
   instruction: string[];
 }
@@ -23,7 +23,19 @@ interface File {
   publicId: string;
 }
 
-type Muscle =
+type EquipmentName =
+  | 'All Equipment'
+  | 'Barbell'
+  | 'Dumbbell'
+  | 'Kettlebell'
+  | 'Machine'
+  | 'Plate'
+  | 'Resistance Band'
+  | 'Suspension Band'
+  | 'None'
+  | 'Other';
+
+type MuscleName =
   | 'All Muscles'
   | 'Abdominals'
   | 'Abductors'
@@ -45,27 +57,21 @@ type Muscle =
   | 'Upper Back'
   | 'Other';
 
-type Equipment =
-  | 'All Equipment'
-  | 'Barbell'
-  | 'Dumbbell'
-  | 'Kettlebell'
-  | 'Machine'
-  | 'Plate'
-  | 'Resistance Band'
-  | 'Suspension Band'
-  | 'None'
-  | 'Other';
-
 interface SeedData {
   users: SeedUser[];
   exercises: SeedExercise[];
   equipments: SeedEquipment[];
+  muscles: SeedMuscle[];
 }
 
 interface SeedEquipment {
   id: number;
-  name: Equipment;
+  name: EquipmentName;
+}
+
+interface SeedMuscle {
+  id: number;
+  name: MuscleName;
 }
 
 export const initialData: SeedData = {
@@ -86,9 +92,9 @@ export const initialData: SeedData = {
   exercises: [
     {
       title: 'Bench Press (Barbell)',
-      equipmentId: 2, // Barbell
-      primaryMuscle: 'Chest',
-      secondaryMuscle: ['Triceps', 'Shoulders'],
+      equipmentId: 2,
+      primaryMuscleId: 7,
+      secondaryMuscleIds: [8, 16],
       instruction: [
         'Lie on the bench.',
         'Extend your arms and grab the bar evenly, having your hands slightly wider than shoulder-width apart.',
@@ -105,9 +111,9 @@ export const initialData: SeedData = {
     },
     {
       title: 'Hack Squat (Machine)',
-      equipmentId: 5, // Machine
-      primaryMuscle: 'Quadriceps',
-      secondaryMuscle: ['Glutes', 'Hamstrings'],
+      equipmentId: 5,
+      primaryMuscleId: 15,
+      secondaryMuscleIds: [],
       instruction: [
         'Add weight to the machine.',
         'Position yourself inside the machine with your shoulders against the pad.',
@@ -165,6 +171,88 @@ export const initialData: SeedData = {
     },
     {
       id: 10,
+      name: 'Other',
+    },
+  ],
+  muscles: [
+    {
+      id: 1,
+      name: 'All Muscles',
+    },
+    {
+      id: 2,
+      name: 'Abdominals',
+    },
+    {
+      id: 3,
+      name: 'Abductors',
+    },
+    {
+      id: 4,
+      name: 'Biceps',
+    },
+    {
+      id: 5,
+      name: 'Calves',
+    },
+    {
+      id: 6,
+      name: 'Cardio',
+    },
+    {
+      id: 7,
+      name: 'Chest',
+    },
+    {
+      id: 8,
+      name: 'Forearms',
+    },
+    {
+      id: 9,
+      name: 'Full Body',
+    },
+    {
+      id: 10,
+      name: 'Glutes',
+    },
+    {
+      id: 11,
+      name: 'Hamstrings',
+    },
+    {
+      id: 12,
+      name: 'Lats',
+    },
+    {
+      id: 13,
+      name: 'Lower Back',
+    },
+    {
+      id: 14,
+      name: 'Neck',
+    },
+    {
+      id: 15,
+      name: 'Quadriceps',
+    },
+    {
+      id: 16,
+      name: 'Shoulders',
+    },
+    {
+      id: 17,
+      name: 'Traps',
+    },
+    {
+      id: 18,
+      name: 'Triceps',
+    },
+    {
+      id: 19,
+      name: 'Upper Back',
+    },
+    {
+      id: 20,
       name: 'Other',
     },
   ],

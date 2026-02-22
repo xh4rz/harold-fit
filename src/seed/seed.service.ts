@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../auth/entities/user.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { initialData } from './data/seed-data';
-import { ExercisesService } from 'src/exercises/exercises.service';
-import { Exercise, ExerciseVideo } from 'src/exercises/entities';
+import { Exercise, ExerciseVideo } from '../exercises/entities';
 import { Equipment } from '../equipments/entities/equipment.entity';
+import { Muscle } from '../muscles/entities/muscle.entity';
 
 @Injectable()
 export class SeedService {
@@ -22,7 +22,8 @@ export class SeedService {
     @InjectRepository(Equipment)
     private readonly equipmentRepository: Repository<Equipment>,
 
-    private readonly exercisesService: ExercisesService,
+    @InjectRepository(Muscle)
+    private readonly muscleRepository: Repository<Muscle>,
   ) {}
 
   async runSeed() {
@@ -32,21 +33,21 @@ export class SeedService {
 
     await this.insertEquipment();
 
+    await this.insertMuscle();
+
     await this.insertNewExercies();
 
     return 'SEED EXECUTED';
   }
 
   private async deleteTables() {
-    await this.exercisesService.deleteAllExercises();
+    await this.exerciseRepository.createQueryBuilder().delete().execute();
 
-    await this.equipmentRepository
-      .createQueryBuilder()
-      .delete()
-      .where({})
-      .execute();
+    await this.equipmentRepository.createQueryBuilder().delete().execute();
 
-    await this.userRepository.createQueryBuilder().delete().where({}).execute();
+    await this.muscleRepository.createQueryBuilder().delete().execute();
+
+    await this.userRepository.createQueryBuilder().delete().execute();
   }
 
   private async insertUsers() {
@@ -65,6 +66,12 @@ export class SeedService {
     return equipments;
   }
 
+  private async insertMuscle() {
+    const muscles = await this.muscleRepository.save(initialData.muscles);
+
+    return muscles;
+  }
+
   private async insertNewExercies() {
     const exercises = initialData.exercises;
 
@@ -77,9 +84,26 @@ export class SeedService {
         if (!equipment)
           throw new Error(`Equipment not found: ${exercise.equipmentId}`);
 
+        const primaryMuscle = await this.muscleRepository.findOneBy({
+          id: exercise.primaryMuscleId,
+        });
+
+        if (!primaryMuscle)
+          throw new Error(
+            `Primary muscle not found: ${exercise.primaryMuscleId}`,
+          );
+
+        const secondaryMuscleIds = exercise.secondaryMuscleIds ?? [];
+
+        const secondaryMuscles = await this.muscleRepository.findBy({
+          id: In(secondaryMuscleIds),
+        });
+
         return this.exerciseRepository.create({
           ...exercise,
           equipment,
+          primaryMuscle,
+          secondaryMuscles,
           video: this.exerciseVideoRepository.create({
             url: exercise.file.url,
             publicId: exercise.file.publicId,

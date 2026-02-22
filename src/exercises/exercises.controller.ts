@@ -18,7 +18,8 @@ import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { PaginationDto } from '../common/dtos';
 import { Auth } from '../auth/decorators';
 import { VideoFileUpload } from '../common/decorators';
-import { ValidRoles } from 'src/auth/interfaces';
+import { ValidRoles } from '../auth/interfaces';
+import { ValidateMusclesPipe } from './pipes/validate-muscles.pipe';
 
 @ApiBearerAuth()
 @Auth()
@@ -30,7 +31,7 @@ export class ExercisesController {
   @Post()
   @VideoFileUpload()
   create(
-    @Body() createExerciseDto: CreateExerciseDto,
+    @Body(ValidateMusclesPipe) createExerciseDto: CreateExerciseDto,
     @UploadedFile(new ParseFilePipe()) file: Express.Multer.File,
   ) {
     return this.exercisesService.create(createExerciseDto, file);
@@ -51,7 +52,7 @@ export class ExercisesController {
   @VideoFileUpload()
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateExerciseDto: UpdateExerciseDto,
+    @Body(ValidateMusclesPipe) updateExerciseDto: UpdateExerciseDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.exercisesService.update(id, updateExerciseDto, file);

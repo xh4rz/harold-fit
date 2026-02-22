@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
@@ -9,6 +9,7 @@ import { Exercise, ExerciseVideo } from './entities';
 import { DatabaseExceptionService } from '../common/services';
 import { PaginationDto } from '../common/dtos';
 import { Equipment } from '../equipments/entities/equipment.entity';
+import { Muscle } from '../muscles/entities/muscle.entity';
 
 @Injectable()
 export class ExercisesService {
@@ -19,6 +20,9 @@ export class ExercisesService {
     @InjectRepository(ExerciseVideo)
     private readonly exerciseVideoRepository: Repository<ExerciseVideo>,
 
+    @InjectRepository(Muscle)
+    private readonly muscleRepository: Repository<Muscle>,
+
     private readonly cloudinaryService: CloudinaryService,
 
     private readonly databaseExceptionService: DatabaseExceptionService,
@@ -28,13 +32,20 @@ export class ExercisesService {
     createExerciseDto: CreateExerciseDto,
     file: Express.Multer.File,
   ) {
+    const { secondaryMuscleIds = [], ...rest } = createExerciseDto;
+
     let uploadResult: CloudinaryResponse | undefined;
 
     try {
       uploadResult = await this.cloudinaryService.uploadFile(file);
 
+      const secondaryMuscles = await this.muscleRepository.find({
+        where: { id: In(secondaryMuscleIds) },
+      });
+
       const exercise = this.exerciseRepository.create({
-        ...createExerciseDto,
+        ...rest,
+        secondaryMuscles,
         video: this.exerciseVideoRepository.create({
           publicId: uploadResult.public_id,
           url: uploadResult.secure_url,
@@ -89,20 +100,18 @@ export class ExercisesService {
     updateExerciseDto: UpdateExerciseDto,
     file?: Express.Multer.File,
   ) {
+    const { secondaryMuscleIds = [], ...rest } = updateExerciseDto;
     let uploadResult: CloudinaryResponse | undefined;
+
+    const exercise = await this.exerciseRepository.findOne({ where: { id } });
+
+    if (!exercise) {
+      throw new NotFoundException(`Exercise with id "${id}" not found`);
+    }
 
     try {
       if (file) {
-        const exercise = await this.exerciseRepository.findOne({
-          where: { id },
-        });
-
-        if (!exercise) {
-          throw new NotFoundException(`Exercise with id "${id}" not found`);
-        }
-
         const oldPublicId = exercise.video.publicId;
-
         uploadResult = await this.cloudinaryService.uploadFile(file);
 
         await this.exerciseVideoRepository.update(exercise.video.id, {
@@ -115,7 +124,33 @@ export class ExercisesService {
         }
       }
 
-      await this.exerciseRepository.update(id, updateExerciseDto);
+      await this.exerciseRepository
+        .createQueryBuilder()
+        .update(Exercise)
+        .set(rest)
+        .where('id = :id', { id })
+        .execute();
+
+      if (secondaryMuscleIds.length > 0) {
+        const secondaryMuscles = await this.muscleRepository.find({
+          where: { id: In(secondaryMuscleIds) },
+        });
+
+        await this.exerciseRepository
+          .createQueryBuilder()
+          .relation(Exercise, 'secondaryMuscles')
+          .of(id)
+          .addAndRemove(
+            secondaryMuscles.map((m) => m.id),
+            exercise.secondaryMuscles.map((m) => m.id),
+          );
+      } else {
+        await this.exerciseRepository
+          .createQueryBuilder()
+          .relation(Exercise, 'secondaryMuscles')
+          .of(id)
+          .remove(exercise.secondaryMuscles.map((m) => m.id));
+      }
 
       return this.findOne(id);
     } catch (error) {

@@ -9,6 +9,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CommonModule } from './common/common.module';
 import { DatabaseExceptionService } from './common/services';
 import { EquipmentsModule } from './equipments/equipments.module';
+import { MusclesModule } from './muscles/muscles.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { EquipmentsModule } from './equipments/equipments.module';
     CloudinaryModule,
     CommonModule,
     EquipmentsModule,
+    MusclesModule,
   ],
   controllers: [],
   providers: [DatabaseExceptionService],

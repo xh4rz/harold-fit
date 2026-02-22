@@ -16,17 +16,16 @@ export class CreateExerciseDto {
   @IsNumber()
   equipmentId: number;
 
-  @IsString()
-  @MinLength(3)
-  primaryMuscle: string;
+  @IsNumber()
+  primaryMuscleId: number;
 
-  @IsArray()
+  @Transform(({ value }) => value && JSON.parse(value))
   @IsOptional()
-  secondaryMuscle?: string[];
+  @IsArray()
+  @IsNumber({}, { each: true })
+  secondaryMuscleIds?: number[];
 
-  @Transform(({ value }) =>
-    typeof value === 'string' ? JSON.parse(value) : value,
-  )
+  @Transform(({ value }) => value && JSON.parse(value))
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
