@@ -4,11 +4,14 @@ class UserData {
   @ApiProperty({ format: 'uuid' })
   id: string;
 
+  @ApiProperty({ example: 'xh4rz' })
+  username: string;
+
   @ApiProperty({ example: 'user@example.com' })
   email: string;
 
-  @ApiProperty({ example: 'John Doe' })
-  fullName: string;
+  @ApiProperty({ example: 'Harold Gonzalez' })
+  fullname: string;
 
   @ApiProperty({ default: true })
   isActive: boolean;

@@ -15,7 +15,8 @@ export class UsersService {
   private readonly baseSelect = {
     id: true,
     email: true,
-    fullName: true,
+    username: true,
+    fullname: true,
     isActive: true,
     roles: true,
   };

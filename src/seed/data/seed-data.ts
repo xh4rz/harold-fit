@@ -1,8 +1,9 @@
 import * as bcrypt from 'bcrypt';
 
 interface SeedUser {
+  username: string;
   email: string;
-  fullName: string;
+  fullname: string;
   password: string;
   roles: Roles[];
 }
@@ -80,14 +81,16 @@ interface SeedMuscle {
 export const initialData: SeedData = {
   users: [
     {
+      username: 'xh4rz',
       email: 'harold@gmail.com',
-      fullName: 'Harold Gonzalez',
+      fullname: 'Harold Gonzalez',
       password: bcrypt.hashSync('-Abc123', 10),
       roles: ['admin'],
     },
     {
+      username: 'olga_66',
       email: 'olga@google.com',
-      fullName: 'Olga Mancipe',
+      fullname: 'Olga Mancipe',
       password: bcrypt.hashSync('-Abc123', 10),
       roles: ['user'],
     },

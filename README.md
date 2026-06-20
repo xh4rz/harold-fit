@@ -285,7 +285,7 @@ Usuarios del sistema.
 id
 email
 password
-fullName
+fullname
 isActive
 roles
 refreshToken

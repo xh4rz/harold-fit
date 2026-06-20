@@ -29,6 +29,15 @@ export class DatabaseExceptionService {
         throw new BadRequestException(`Email ${email} is already registered`);
       }
 
+      if (detail.includes('username')) {
+        const match = detail.match(/\(username\)=\(([^)]+)\)/);
+        const username = match?.[1] ?? null;
+
+        throw new BadRequestException(
+          `Username ${username} is already registered`,
+        );
+      }
+
       throw new BadRequestException(detail);
     }
 

@@ -24,7 +24,12 @@ export class User {
   password: string;
 
   @Column('text')
-  fullName: string;
+  fullname: string;
+
+  @Column('text', {
+    unique: true,
+  })
+  username: string;
 
   @Column('bool', {
     default: true,
@@ -47,8 +52,8 @@ export class User {
       this.email = this.email.toLowerCase().trim();
     }
 
-    if (this.fullName) {
-      this.fullName = this.fullName.toLowerCase().trim();
+    if (this.fullname) {
+      this.fullname = this.fullname.toLowerCase().trim();
     }
   }
 
