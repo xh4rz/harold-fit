@@ -25,7 +25,7 @@ export class AuthService {
     try {
       const { password, ...userData } = registerUserDto;
 
-      const user = await this.usersService.create({
+      const user = await this.usersService.createUser({
         ...userData,
         password: bcrypt.hashSync(password, 10),
       });
@@ -52,7 +52,7 @@ export class AuthService {
   ) {
     const { password, email } = loginUserDto;
 
-    const user = await this.usersService.findByEmail(email);
+    const user = await this.usersService.findByEmailForLogin(email);
 
     if (!user)
       throw new UnauthorizedException('Credentials are not valid (email)');

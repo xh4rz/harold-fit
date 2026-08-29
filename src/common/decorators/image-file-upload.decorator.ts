@@ -1,13 +1,13 @@
 import { UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { fileVideoFilter } from '../helpers';
+import { fileImageFilter } from '../helpers';
 
-export const VideoFileUpload = () => {
+export const ImageFileUpload = () => {
   return UseInterceptors(
     FileInterceptor('file', {
-      fileFilter: fileVideoFilter,
+      fileFilter: fileImageFilter,
       limits: {
-        fileSize: 10 * 1024 * 1024, // 10 MB
+        fileSize: 2 * 1024 * 1024, // 2MB
       },
     }),
   );

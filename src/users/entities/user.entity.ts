@@ -5,8 +5,11 @@ import {
   Column,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { UserImage } from './user-image.entity';
+import { Gender } from '@/auth/interfaces';
 
 @Entity('users')
 export class User {
@@ -42,8 +45,24 @@ export class User {
   })
   roles: string[];
 
-  @Column('text', { nullable: true })
+  @Column('text', { nullable: true, select: false })
   refreshToken: string | null;
+
+  @Column('text', { nullable: true })
+  description?: string | null;
+
+  @Column({
+    nullable: true,
+    type: 'enum',
+    enum: Gender,
+  })
+  gender?: Gender;
+
+  @Column({
+    type: 'date',
+    nullable: true,
+  })
+  birthDate?: Date;
 
   @BeforeInsert()
   @BeforeUpdate()
@@ -59,4 +78,10 @@ export class User {
 
   @OneToMany(() => Routine, (routine) => routine.user)
   routines: Routine[];
+
+  @OneToOne(() => UserImage, (image) => image.user, {
+    cascade: true,
+    eager: true,
+  })
+  image: UserImage;
 }
