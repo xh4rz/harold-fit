@@ -39,7 +39,7 @@ export class ExercisesService {
     let uploadResult: CloudinaryResponse | undefined;
 
     try {
-      uploadResult = await this.cloudinaryService.uploadFile(file);
+      uploadResult = await this.cloudinaryService.uploadFile(file, 'exercises');
 
       const secondaryMuscles = await this.muscleRepository.find({
         where: { id: In(secondaryMuscleIds) },
@@ -137,7 +137,10 @@ export class ExercisesService {
     try {
       if (file) {
         const oldPublicId = exercise.video.publicId;
-        uploadResult = await this.cloudinaryService.uploadFile(file);
+        uploadResult = await this.cloudinaryService.uploadFile(
+          file,
+          'exercises',
+        );
 
         await this.exerciseVideoRepository.update(exercise.video.id, {
           url: uploadResult.secure_url,
